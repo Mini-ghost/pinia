@@ -57,6 +57,8 @@ export interface Pinia {
    */
   use(plugin: PiniaPlugin): Pinia
 
+  _r: Record<string, (() => void)[]>
+
   /**
    * Installed store plugins
    *

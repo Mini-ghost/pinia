@@ -80,4 +80,6 @@ export { acceptHMRUpdate } from './hmr'
 
 export { PiniaVuePlugin } from './vue2-plugin'
 
+export { onReset } from './reset'
+
 export * from './globalExtensions'

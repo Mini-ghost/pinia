@@ -47,6 +47,7 @@ import {
   _StoreWithState,
 } from './types'
 import { setActivePinia, piniaSymbol, Pinia, activePinia } from './rootStore'
+import { setActiveStore } from './reset'
 import { IS_CLIENT, USE_DEVTOOLS } from './env'
 import { patchObject } from './hmr'
 import { addSubscription, triggerSubscriptions, noop } from './subscriptions'
@@ -333,9 +334,12 @@ function createSetupStore<
   /* istanbul ignore next */
   const $reset = __DEV__
     ? () => {
-        throw new Error(
-          `🍍: Store "${$id}" is built using the setup syntax and does not implement $reset().`
-        )
+        ;(pinia._r[$id] || []).forEach((callback) => {
+          callback()
+        })
+        // throw new Error(
+        //   `🍍: Store "${$id}" is built using the setup syntax and does not implement $reset().`
+        // )
       }
     : noop
 
@@ -471,6 +475,8 @@ function createSetupStore<
   // store the partial store now so the setup of stores can instantiate each other before they are finished without
   // creating infinite loops.
   pinia._s.set($id, store)
+
+  setActiveStore(store)
 
   // TODO: idea create skipSerialize that marks properties as non serializable and they are skipped
   const setupStore = pinia._e.run(() => {
@@ -747,6 +753,9 @@ function createSetupStore<
 
   isListening = true
   isSyncListening = true
+
+  setActiveStore()
+
   return store
 }
 
